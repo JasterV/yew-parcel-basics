@@ -43,10 +43,7 @@ impl Component for App {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::ChangeNavbarItem(index) => {
-                for (i, _) in self.navbar_items.clone().into_iter().enumerate() {
-                    self.navbar_items[i] = false;
-                }
-
+                self.navbar_items.iter_mut().for_each(|item| *item = false);
                 self.navbar_items[index] = true;
             }
         }
@@ -60,41 +57,33 @@ impl Component for App {
     fn view(&self) -> Html {
         html! {
             <div>
-                <Navbar
-                    class_name="navbar-router"
-                    navbar_palette=Palette::Info
-                    navbar_style=Style::Outline
-                    fixed=Fixed::Top
-                    branch=html!{<img src="./spielrs_logo.png"/>}
-                >
+                <Navbar class_name="navbar-router"
+                        navbar_palette=Palette::Info
+                        navbar_style=Style::Outline
+                        fixed=Fixed::Top
+                        branch=html!{<img src="./spielrs_logo.png"/>}>
                     <NavbarContainer>
-                        <NavbarItem
-                            class_name="navbar-route"
-                            active = self.navbar_items[0]
-                            onclick_signal = self.link.callback(|_| Msg::ChangeNavbarItem(0))
-                            >
-                            <RouterAnchor<AppRouter>route=AppRouter::RootPath>{"Home"}</RouterAnchor<AppRouter>></NavbarItem>
-                        <NavbarItem
-                            class_name="navbar-route"
-                            active = self.navbar_items[1]
-                            onclick_signal = self.link.callback(|_| Msg::ChangeNavbarItem(1))
-                            >
-                            <RouterAnchor<AppRouter>route=AppRouter::AboutPath>{"About"}</RouterAnchor<AppRouter>></NavbarItem>
+                        <NavbarItem class_name="navbar-route" 
+                                    active = self.navbar_items[0] 
+                                    onclick_signal = self.link.callback(|_| Msg::ChangeNavbarItem(0))>
+                            <RouterAnchor<AppRouter>route=AppRouter::RootPath>{"Home"}</RouterAnchor<AppRouter>>
+                        </NavbarItem>
+                        <NavbarItem class_name="navbar-route"
+                                    active = self.navbar_items[1]
+                                    onclick_signal = self.link.callback(|_| Msg::ChangeNavbarItem(1))>
+                            <RouterAnchor<AppRouter>route=AppRouter::AboutPath>{"About"}</RouterAnchor<AppRouter>>
+                        </NavbarItem>
                     </NavbarContainer>
                 </Navbar>
                 <Router<AppRouter, ()>
                     render = Router::render(|switch: AppRouter | {
                         match switch {
-                            AppRouter::RootPath => html!{
-                                <Home/>
-                            },
-                            AppRouter::AboutPath => html!{
-                                <About/>
-                            },
+                            AppRouter::RootPath => html!{ <Home/> },
+                            AppRouter::AboutPath => html!{ <About/> },
                             AppRouter::PageNotFound(Permissive(None)) => html!{"Page not found"},
                             AppRouter::PageNotFound(Permissive(Some(missed_route))) => html!{format!("Page '{}' not found", missed_route)}
                         }
-                    } )
+                    })
                     redirect = Router::redirect(|route: Route<()>| {
                         AppRouter::PageNotFound(Permissive(Some(route.route)))
                     })

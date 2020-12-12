@@ -3,9 +3,8 @@ authors = ["Francisco Jesus Navarro Cortes"]
 categories = ["wasm"]
 description = "My awesome Yew with Yew-Router and Parcel application!"
 license = "MIT"
-name = "yew-parcel"
+name = "yew_parcel_test"
 readme = "./README.md"
-repository = "https://github.com/spielrs/yew-parcel-template.git"
 version = "0.17.2"
 
 [lib]

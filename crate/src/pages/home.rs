@@ -4,18 +4,30 @@ use yew_styles::layouts::{
     item::{Item, ItemLayout},
 };
 
-pub struct Home;
+pub struct Home {
+    link: ComponentLink<Self>,
+    state: i32,
+}
+
+pub enum Msg {
+    AddOne,
+}
 
 impl Component for Home {
-    type Message = ();
+    type Message = Msg;
     type Properties = ();
 
-    fn create(_: Self::Properties, _: ComponentLink<Self>) -> Self {
-        Home {}
+    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+        Home { state: 0, link }
     }
 
-    fn update(&mut self, _: Self::Message) -> ShouldRender {
-        false
+    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            Msg::AddOne => {
+                self.state += 1;
+                true
+            }
+        }
     }
 
     fn change(&mut self, _: Self::Properties) -> ShouldRender {
@@ -23,24 +35,14 @@ impl Component for Home {
     }
 
     fn view(&self) -> Html {
+        let onclick = self.link.callback(|_| Msg::AddOne);
         html! {
             <Container direction=Direction::Row wrap=Wrap::Wrap class_name="content">
                 <Item layouts=vec!(ItemLayout::ItXs(12))>
-                    <h2>{"Yew Parcel Template"}</h2>
+                    <h2>{"Times clicked: "}{self.state}</h2>
                 </Item>
                 <Item layouts=vec!(ItemLayout::ItXs(12))>
-                    <h3>{"Libraries used in this template"}</h3>
-                </Item>
-                <Item layouts=vec!(ItemLayout::ItXs(12))>
-                    <ul>
-                        <li><a href="https://yew.rs" target="_blank">{"yew.rs"}</a>{" : rustwasm frontent framwork"}</li>
-                        <li><a href="https://github.com/spielrs/yew_styles" target="_blank">
-                            {"yew_styles"}</a>{" : styles framework for yew"}</li>
-                        <li><a href="https://parceljs.org/" target="_blank">
-                            {"parceljs"}</a>{" : builder js library"}</li>
-                        <li><a href="https://github.com/paulmillr/chokidar" target="_blank">
-                        {"chokidar"}</a>{" : watcher js library"}</li>
-                    </ul>
+                    <button onclick=onclick>{"Add One!"}</button>
                 </Item>
             </Container>
         }
